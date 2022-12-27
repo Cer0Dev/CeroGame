@@ -27,6 +27,7 @@ body {
     border-color: white;
     border-radius: 0px 0px 6.25vw;
     margin: 0;
+    margin-left: 0.1vw;
     padding: 0.416vw;
     width: fit-content;
     text-align: left;
@@ -44,7 +45,7 @@ body {
     background-color: white;
     border: solid;
     border-color: white;
-    border-radius: 3.33vw 0px;
+    border-radius: 2vw 0px;
     padding: 0.416vw;
     padding-right: 2.5vw;
 }
@@ -76,9 +77,5 @@ body {
     .number-container-center {
         margin-top: -0.6vw;
         /*padding-right: 2vw;*/
-    }
-
-    .deck-item{
-        margin-left: 40%;
     }
 }

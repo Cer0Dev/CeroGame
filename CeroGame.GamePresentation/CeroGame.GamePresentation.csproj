@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\css\Card - Copy.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\css\Card - Copy.css" />
     <None Include="wwwroot\css\Card.css" />
     <None Include="wwwroot\css\Styles.css" />
   </ItemGroup>

@@ -5,32 +5,13 @@
 @page "/counter"
 @*<MudGrid>*@
 
-@for (int i = 0; i < Math.Ceiling((double)models.Count() / cardsPerRow); i++)
-{
-    <div class="row">
-        @{
-            var index = (i * cardsPerRow) < models.Count() - 1 ? (i * cardsPerRow) : Math.Abs((i * cardsPerRow) - (models.Count() - 1));
-            var t = index;
-            var count = (cardsPerRow+index <= models.Count() - 1 ? cardsPerRow : Math.Abs(models.Count() - index));
-            var b = count;
-        }
-        @foreach (var item in models.GetRange(index, count))
-        {
-            <CeroGame.GamePresentation.Components.Card CardModel="item" Offset="(3*(Math.Ceiling((double)models.IndexOf(item)%cardsPerRow)))*-1" />
-        }
-    </div>
 
-}
-
+<MudText>ME:</MudText>
+<CeroGame.GamePresentation.Components.Deck Hidden=false Cards="DealCards(20)"/>
+<MudText>Them:</MudText>
+<CeroGame.GamePresentation.Components.Deck Cards="DealCards(20)" />
 @code {
-    private int currentCount = 0;
-    private int cardsPerRow = 6;
-    private void IncrementCount()
-    {
-        currentCount++;
-        MudGrid m = new();
 
-    }
 
 
     private List<CardModel> models = new();
@@ -40,6 +21,14 @@
         foreach (var item in Enum.GetValues(typeof(Colours)).Cast<Colours>())
         {
             Enumerable.Range(1, 9).ToList().ForEach(x => models.Add(new() { Colour = item, Number = x }));
+            Enumerable.Range(1, 9).ToList().ForEach(x => models.Add(new() { Colour = item, Number = x }));
         }
+    }
+
+    public List<CardModel> DealCards(int amount)
+    {
+        var cards = models.OrderBy(x => new Random().Next()).Take(amount).ToList();
+        models = models.Except(cards).ToList();
+        return cards;
     }
 }

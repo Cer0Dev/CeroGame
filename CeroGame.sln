@@ -5,9 +5,9 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CeroGame", "CeroGame\CeroGame.csproj", "{65C307CF-73EA-45E2-AA76-6557C72BC3DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CeroGame.GamePresentation", "CeroGame.GamePresentation\CeroGame.GamePresentation.csproj", "{DDAD9DC8-F9E9-486A-AEBF-2E56A6D465A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CeroGame.GamePresentation", "CeroGame.GamePresentation\CeroGame.GamePresentation.csproj", "{DDAD9DC8-F9E9-486A-AEBF-2E56A6D465A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CeroGame.GameService", "CeroGame.GameService\CeroGame.GameService.csproj", "{30E2988C-5D2A-4238-B8C8-0EE704E57244}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CeroGame.GameService", "CeroGame.GameService\CeroGame.GameService.csproj", "{30E2988C-5D2A-4238-B8C8-0EE704E57244}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,16 +1,23 @@
 ﻿@using MudBlazor
 
-<MudPaper Class="card-container" Style=@($"background-color:{CardModel.Colour.ToString()};position:relative; left:{Offset}vw") Elevation="3">
-    <div class="number-container-corner">
-        <h1>@CardModel.Number</h1>
-    </div>
-    <div class="number-container-center .text-center">
-        <h1>@CardModel.Number</h1>
-    </div>
+<MudPaper Class="card-container" Style=@($"background-color:{ColourString};position:relative; left:{Offset}vw") Elevation="3">
+
+    @if (!Hidden)
+    {
+        <div class="number-container-corner">
+            <h1>@CardModel.Number</h1>
+        </div>
+        <div class="number-container-center .text-center">
+            <h1>@CardModel.Number</h1>
+        </div>
+    }
 </MudPaper>
 
 
-@code{
+@code {
     [Parameter]
-    public double Offset { get;set; }
+    public double Offset { get; set; }
+    [Parameter]
+    public bool Hidden { get; set; } = true;
+    private string ColourString { get => Hidden ? "grey" : CardModel.Colour.ToString(); }
 }
