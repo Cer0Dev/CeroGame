@@ -1,0 +1,84 @@
+﻿
+body {
+}
+
+
+.card-container {
+    width: 8.33vw;
+    height: 13.33vw;
+    border-color: white;
+    border-style: solid;
+    border-width: 0.416vw;
+    display: inline-block;
+    padding: 0;
+}
+
+    .card-container:hover {
+        border-color: gold;
+    }
+
+    .card-container:active {
+        border-color: gold;
+    }
+
+.number-container-corner {
+    background-color: white;
+    border: solid;
+    border-color: white;
+    border-radius: 0px 0px 6.25vw;
+    margin: 0;
+    padding: 0.416vw;
+    width: fit-content;
+    text-align: left;
+    position: relative;
+    left: -0.25vw;
+}
+.number-container-corner h1{
+    font-size: 2vw;
+}
+
+.number-container-center {
+    width: fit-content;
+    margin: auto;
+    margin-top: 0.416vw;
+    background-color: white;
+    border: solid;
+    border-color: white;
+    border-radius: 3.33vw 0px;
+    padding: 0.416vw;
+    padding-right: 2.5vw;
+}
+
+    .number-container-center h1 {
+        position: relative;
+        right: -1.0833vw;
+        font-size: 2.5vw;
+    }
+
+@media only screen and (max-width: 600px) {
+    .card-container {
+        width: 11.3vw;
+        height: 17.3vw;
+        /*margin-left: 25vw;*/
+    }
+
+    .number-container-center {
+        margin-top: 0;
+    }
+
+    .number-container-corner {
+        font-size: 0.500rem;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+
+    .number-container-center {
+        margin-top: -0.6vw;
+        /*padding-right: 2vw;*/
+    }
+
+    .deck-item{
+        margin-left: 40%;
+    }
+}

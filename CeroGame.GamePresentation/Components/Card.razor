@@ -1,0 +1,16 @@
+﻿@using MudBlazor
+
+<MudPaper Class="card-container" Style=@($"background-color:{CardModel.Colour.ToString()};position:relative; left:{Offset}vw") Elevation="3">
+    <div class="number-container-corner">
+        <h1>@CardModel.Number</h1>
+    </div>
+    <div class="number-container-center .text-center">
+        <h1>@CardModel.Number</h1>
+    </div>
+</MudPaper>
+
+
+@code{
+    [Parameter]
+    public double Offset { get;set; }
+}
