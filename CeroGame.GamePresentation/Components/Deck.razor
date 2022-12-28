@@ -2,15 +2,16 @@
 {
     <div class="row align-items-center justify-content-center deck-row">
         @{
-            var index = (i * CardsPerRow) < Cards.Count() - 1 ? (i * CardsPerRow) : Math.Abs((i * CardsPerRow) - (Cards.Count() - 1));
-            var t = index;
+            var index = (i * CardsPerRow) <= Cards.Count() - 1 ? (i * CardsPerRow) : Math.Abs((i * CardsPerRow) - (Cards.Count() - 1));
             var count = (CardsPerRow + index <= Cards.Count() - 1 ? CardsPerRow : Math.Abs(Cards.Count() - index));
-            var b = count;
+            var topOffset =  (_topOffsetMultiplyer * i) * -1;
+
         }
         @foreach (var item in Cards.GetRange(index, count))
         {
-                    <CeroGame.GamePresentation.Components.Card Hidden=Hidden CardModel="item" Offset="(3*(Math.Ceiling((double)Cards.IndexOf(item)%CardsPerRow)))*-1" />
+            var leftOffset = (_leftOffsetMultiplyer * (Math.Ceiling((double)Cards.IndexOf(item) % CardsPerRow))) * -1;
+            <CeroGame.GamePresentation.Components.Card Hidden=Hidden CardModel="item" Deck="this" GM=this.GM  LeftOffset="leftOffset" topOffset="topOffset" />
         }
-        </div>
+    </div>
 
 }

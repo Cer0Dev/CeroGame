@@ -13,12 +13,19 @@ body {
     padding: 0;
 }
 
-    .card-container:hover {
+.CardDisabled {
+    opacity: 0.9999999;
+    background-image: linear-gradient(to bottom, rgba(255,255, 255,0.52), rgba(211,211,211, 0.73));
+    z-index: -1;
+}
+.card-container.CanBePlayed:hover {
         border-color: gold;
+        z-index:4;
     }
 
-    .card-container:active {
+.card-container.CanBePlayed:active {
         border-color: gold;
+
     }
 
 .number-container-corner {
@@ -33,6 +40,7 @@ body {
     text-align: left;
     position: relative;
     left: -0.25vw;
+    user-select:none;
 }
 .number-container-corner h1{
     font-size: 2vw;
@@ -48,6 +56,7 @@ body {
     border-radius: 2vw 0px;
     padding: 0.416vw;
     padding-right: 2.5vw;
+    user-select:none;
 }
 
     .number-container-center h1 {

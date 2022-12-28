@@ -1,0 +1,22 @@
+﻿@using CeroGame.GameService.GameLogic;
+@using CeroGame.GameService.Models;
+@foreach(var item in PlayedCards)
+{
+    @if (PlayedCards.Count() > rotations.Count() && PlayedCards.FirstOrDefault() != item )
+    {
+        rotations.Add(new Random().Next(-10, 10));
+    }
+    <div style=@($"position:absolute; transform:rotate({rotations[PlayedCards.IndexOf(item)]}deg)")>
+    <Card CardModel="item" GM=GM Hidden=false></Card>
+    </div>
+}
+
+
+    
+@code {
+    [Parameter]
+    public List<CardModel> PlayedCards { get; set; }
+    [Parameter]
+    public GameMaster GM { get; set; }
+    private List<int> rotations = new() { 0 };
+}

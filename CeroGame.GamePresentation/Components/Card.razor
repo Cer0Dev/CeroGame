@@ -1,7 +1,8 @@
-﻿@using MudBlazor
+﻿@using CeroGame.GameService.GameLogic;
+@using MudBlazor
 
-<MudPaper Class="card-container" Style=@($"background-color:{ColourString};position:relative; left:{Offset}vw") Elevation="3">
-
+<MudPaper @onclick="ToggleActive" Class=@($"card-container {CanBePlayedString}") Style=@($"background-color:{ColourString};position:relative; left:{LeftOffset}vw; top:calc({topOffset}vw + {_activeOffsetString}vw)") Elevation="3">
+    @*@CardModel.GuidId;*@
     @if (!Hidden)
     {
         <div class="number-container-corner">
@@ -15,9 +16,5 @@
 
 
 @code {
-    [Parameter]
-    public double Offset { get; set; }
-    [Parameter]
-    public bool Hidden { get; set; } = true;
-    private string ColourString { get => Hidden ? "grey" : CardModel.Colour.ToString(); }
+
 }

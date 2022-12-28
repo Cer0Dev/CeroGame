@@ -1,34 +1,9 @@
-﻿@using CeroGame.GameService.Models
+﻿@using CeroGame.GameService.GameLogic;
+@using CeroGame.GameService.Models
 @using CeroGame.GameService.Enums
 @using MudBlazor
 <MudBreakpointProvider></MudBreakpointProvider>
 @page "/counter"
 @*<MudGrid>*@
 
-
-<MudText>ME:</MudText>
-<CeroGame.GamePresentation.Components.Deck Hidden=false Cards="DealCards(20)"/>
-<MudText>Them:</MudText>
-<CeroGame.GamePresentation.Components.Deck Cards="DealCards(20)" />
-@code {
-
-
-
-    private List<CardModel> models = new();
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        foreach (var item in Enum.GetValues(typeof(Colours)).Cast<Colours>())
-        {
-            Enumerable.Range(1, 9).ToList().ForEach(x => models.Add(new() { Colour = item, Number = x }));
-            Enumerable.Range(1, 9).ToList().ForEach(x => models.Add(new() { Colour = item, Number = x }));
-        }
-    }
-
-    public List<CardModel> DealCards(int amount)
-    {
-        var cards = models.OrderBy(x => new Random().Next()).Take(amount).ToList();
-        models = models.Except(cards).ToList();
-        return cards;
-    }
-}
+<CeroGame.GamePresentation.Components.Table/>
