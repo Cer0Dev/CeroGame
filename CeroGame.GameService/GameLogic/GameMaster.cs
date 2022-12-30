@@ -93,9 +93,7 @@ namespace CeroGame.GameService.GameLogic
 
         public void PlayCard(CardModel card)
         {
-            //var b = P1;
-            //b.Remove(card);
-            //P1 = b;
+
             var success = Players.FirstOrDefault(x => x.Cards.Any(y => y == card))?.Cards.Remove(card);
             MiddleDeck.Add(card);
             MainDeck.ForEach(x => x.Active = false);
