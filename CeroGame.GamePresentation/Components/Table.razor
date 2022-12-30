@@ -4,16 +4,21 @@
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage ProtectedSessionStore
 
+@if (Player.Guid != Guid.Empty)
+{
+    @Player.Guid
+    ;
+    @Player.isPlayer
+    ;
+    <CeroGame.GamePresentation.Components.MainDeck Player=Player Table=this GM=GM />
 
-@Player.Guid;
-@Player.isPlayer;
-<CeroGame.GamePresentation.Components.MainDeck Table=this GM=GM />
+    <CeroGame.GamePresentation.Components.MiddleDeck Player=Player Table=this GM=GM />
+    <MudText>ME:</MudText>
+    <CeroGame.GamePresentation.Components.Deck Table=this Hidden=false GM=GM Player="Player" />
+    <MudText>Them:</MudText>
 
-<CeroGame.GamePresentation.Components.MiddleDeck Table=this GM=GM />
-<MudText>ME:</MudText>
-<CeroGame.GamePresentation.Components.Deck Table=this Hidden=false GM=GM Cards="GM.P1" />
-<MudText>Them:</MudText>
-<CeroGame.GamePresentation.Components.Deck Table=this GM=GM Cards="GM.P2" />
+}
+@*<CeroGame.GamePresentation.Components.Deck Table=this GM=GM Cards="GM.P2" />*@
 @code {
     private PlayerModel Player = new();
     [Parameter]
@@ -45,12 +50,9 @@
         ////StateHasChanged();
     }
 
-    public bool hasRefreshed;
-
     public async void Refresh(object? sender, System.EventArgs e) => await InvokeAsync(() =>
     {
         StateHasChanged();
-        hasRefreshed = true;
 
     });
 

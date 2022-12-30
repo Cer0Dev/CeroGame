@@ -25,8 +25,8 @@ namespace CeroGame.GameService.GameLogic
         public int MaxMiddleCards = 20;
         public int AmountOfPlayers = 2;
         public List<PlayerModel> Players = new();
-        public List<CardModel> P1 = new();
-        public List<CardModel> P2 = new();
+        //public List<CardModel> P1 = new();
+        //public List<CardModel> P2 = new();
         public List<int> Rotations = new() { 0 };
         public EventHandler RefreshNeeded;
         public string SessionIdKey { get; } = "UserId";
@@ -71,7 +71,7 @@ namespace CeroGame.GameService.GameLogic
             if (EmptyPlayers.Any())
             {
                 Players[Players.IndexOf(EmptyPlayers.First())].Guid = guid;
-                if (!Players.Any(x=> x.Guid == Guid.Empty))
+                if (!Players.Any(x => x.Guid == Guid.Empty))
                 {
                     Players.ForEach(x => x.Cards = DealCards(StartingAmount).OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList());
                     RefreshNeeded.Invoke(this, EventArgs.Empty);
@@ -83,6 +83,7 @@ namespace CeroGame.GameService.GameLogic
         }
 
         public PlayerModel? GetPlayer(Guid guid) => Players.FirstOrDefault(x => x.Guid == guid);
+        public List<CardModel> GetCards(PlayerModel player) => Players.FirstOrDefault(x => x == player)?.Cards;
         public List<CardModel> DealCards(int amount)
         {
             var cards = MainDeck.OrderBy(x => new Random().Next()).Take(amount).ToList();
@@ -92,23 +93,33 @@ namespace CeroGame.GameService.GameLogic
 
         public void PlayCard(CardModel card)
         {
-            var b = P1;
-            b.Remove(card);
-            P1 = b;
-            card.Active = false;
+            //var b = P1;
+            //b.Remove(card);
+            //P1 = b;
+            var success = Players.FirstOrDefault(x => x.Cards.Any(y => y == card))?.Cards.Remove(card);
             MiddleDeck.Add(card);
+            MainDeck.ForEach(x => x.Active = false);
+
             RefreshNeeded.Invoke(this, EventArgs.Empty);
         }
 
-        public void DrawCard()
+        public void DrawCard(PlayerModel player)
         {
             //for now just give to p1 until we add multi user handler
             var card = DealCards(1).FirstOrDefault();
             if (card is not null)
             {
-                P1.Add(card);
+                Players[Players.IndexOf(player)].Cards.Add(card);
             }
+            MainDeck.ForEach(x => x.Active = false);
             RefreshNeeded.Invoke(this, EventArgs.Empty);
+
+        }
+
+        public void DeactivateCards(PlayerModel player, CardModel? cardToIgnore = null)
+        {
+            Players[Players.IndexOf(player)].Cards
+            .ForEach(x => { if (x != cardToIgnore) { x.Active = false; } });
 
         }
     }

@@ -16,14 +16,14 @@ namespace CeroGame.GamePresentation.Core
         public GameMaster GM { get; set; }
         [Parameter]
         public Table? Table { get; set; }
-        protected List<CardModel> _cards { get; set; } = new();
+        [Parameter]
+        public PlayerModel Player { get; set; }
 
         public void DeactivateCards(CardModel cardToIgnore)
         {
-            _cards.ForEach(x => { if (x.GuidId != cardToIgnore.GuidId) { x.Active = false; } });
+            GM.DeactivateCards(Player, cardToIgnore);
             StateHasChanged();
         }
-
         public void PlayCard(CardModel card)
         {
             GM?.PlayCard(card);
@@ -31,7 +31,7 @@ namespace CeroGame.GamePresentation.Core
         }
         public void DrawCard()
         {
-            GM?.DrawCard();
+            GM?.DrawCard(Player);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace CeroGame.GamePresentation.Components
         private string _activeOffsetString { get => CardModel.Active && !Played ? "-2" : "0"; }
         //Will need to modify this when multi user handler is implemented to check if the card exists in players hands played is temp variable
         public bool CanBePlayed { get => ((GM.MiddleDeck.Last().Colour == CardModel.Colour || GM.MiddleDeck.Last().Number == CardModel.Number) && !Played && !Hidden) || CanPickup; }
-        public void ToggleActive()
+        public virtual void ToggleActive()
         {
             if (!CanBePlayed) return;
 
@@ -43,7 +43,7 @@ namespace CeroGame.GamePresentation.Components
             {
                 //change when adding multi user handler
                 Deck.DrawCard();
-
+                return;
             }
             else if (CardModel.Active)
             {
