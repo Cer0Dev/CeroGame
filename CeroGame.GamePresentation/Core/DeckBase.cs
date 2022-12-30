@@ -26,7 +26,7 @@ namespace CeroGame.GamePresentation.Core
         }
         public void PlayCard(CardModel card)
         {
-            GM?.PlayCard(card);
+            GM?.PlayCard(Player,card);
 
         }
         public void DrawCard()

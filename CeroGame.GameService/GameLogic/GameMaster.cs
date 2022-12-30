@@ -25,8 +25,7 @@ namespace CeroGame.GameService.GameLogic
         public int MaxMiddleCards = 20;
         public int AmountOfPlayers = 2;
         public List<PlayerModel> Players = new();
-        //public List<CardModel> P1 = new();
-        //public List<CardModel> P2 = new();
+        public PlayerModel CurrentPlayer;
         public List<int> Rotations = new() { 0 };
         public EventHandler RefreshNeeded;
         public string SessionIdKey { get; } = "UserId";
@@ -35,9 +34,6 @@ namespace CeroGame.GameService.GameLogic
             GenerateDeck();
             GeneratePlayers();
             MiddleDeck = DealCards(1);
-
-            //P1 = DealCards(StaringAmount);
-            //P2 = DealCards(StaringAmount);
 
         }
         public void GenerateDeck()
@@ -74,6 +70,7 @@ namespace CeroGame.GameService.GameLogic
                 if (!Players.Any(x => x.Guid == Guid.Empty))
                 {
                     Players.ForEach(x => x.Cards = DealCards(StartingAmount).OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList());
+                    CurrentPlayer = Players[new Random().Next(0, Players.Count()) ];
                     RefreshNeeded.Invoke(this, EventArgs.Empty);
                 }
                 return Players[Players.IndexOf(EmptyPlayers.First())];
@@ -83,7 +80,7 @@ namespace CeroGame.GameService.GameLogic
         }
 
         public PlayerModel? GetPlayer(Guid guid) => Players.FirstOrDefault(x => x.Guid == guid);
-        public List<CardModel> GetCards(PlayerModel player) => Players.FirstOrDefault(x => x == player)?.Cards;
+        public List<CardModel> GetCards(PlayerModel player) => Players.First(x => x == player).Cards;
         public List<CardModel> DealCards(int amount)
         {
             var cards = MainDeck.OrderBy(x => new Random().Next()).Take(amount).ToList();
@@ -91,14 +88,20 @@ namespace CeroGame.GameService.GameLogic
             return cards;
         }
 
-        public void PlayCard(CardModel card)
+        public void PlayCard(PlayerModel player, CardModel card)
         {
 
             var success = Players.FirstOrDefault(x => x.Cards.Any(y => y == card))?.Cards.Remove(card);
             MiddleDeck.Add(card);
             MainDeck.ForEach(x => x.Active = false);
-
+            UpdateCurrentPlayer();
             RefreshNeeded.Invoke(this, EventArgs.Empty);
+        }
+        public void UpdateCurrentPlayer()
+        {
+            var index = Players.IndexOf(CurrentPlayer);
+            CurrentPlayer = index + 1 >= AmountOfPlayers ? Players[0] : Players[index + 1];
+
         }
 
         public void DrawCard(PlayerModel player)
@@ -110,6 +113,7 @@ namespace CeroGame.GameService.GameLogic
                 Players[Players.IndexOf(player)].Cards.Add(card);
             }
             MainDeck.ForEach(x => x.Active = false);
+            UpdateCurrentPlayer();
             RefreshNeeded.Invoke(this, EventArgs.Empty);
 
         }
