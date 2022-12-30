@@ -5,13 +5,14 @@
 @inherits DeckBase
 <div class="absolute-deck-container ">
     <MudText>Pick Up:</MudText>
-
-    @foreach (var item in GM.MainDeck)
+    @if (GM.MainDeck.Any())
     {
         <div style=@($"position:absolute")>
-            <Card CardModel="item" Deck=this CanPickup=true GM=GM></Card>
+            <Card CardModel="GM.MainDeck.Last()" Deck=this CanPickup=true GM=GM></Card>
         </div>
+
     }
+
 </div>
 
 @code {

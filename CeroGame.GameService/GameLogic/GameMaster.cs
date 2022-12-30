@@ -22,7 +22,7 @@ namespace CeroGame.GameService.GameLogic
         public bool StandardDeck = true;
         // must be less than the amount of cards in deck
         public int StartingAmount = 20;
-        public int MaxMiddleCards = 20;
+        public int MaxMiddleCards = 15;
         public int AmountOfPlayers = 2;
         public List<PlayerModel> Players = new();
         public PlayerModel CurrentPlayer;
