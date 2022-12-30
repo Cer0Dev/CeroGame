@@ -62,19 +62,24 @@ namespace CeroGame.GameService.GameLogic
 
         public PlayerModel AddPlayer(Guid guid)
         {
-            var EmptyPlayers = Players.Where(x => x.Guid == Guid.Empty);
-            if (EmptyPlayers.Any() && !Players.Any( x=> x.Guid == guid))
+            var EmptyPlayers = Players.Where(x => x.Guid == Guid.Empty).ToList();
+            var Player = Players.FirstOrDefault(x => x.Guid == guid);
+            if (Player is not null)
+            {
+                return Player;
+            }
+            if (EmptyPlayers.Any())
             {
                 Players[Players.IndexOf(EmptyPlayers.First())].Guid = guid;
-                if(Players.Count() == AmountOfPlayers)
+                if (!Players.Any(x=> x.Guid == Guid.Empty))
                 {
-                    Players.ForEach(x=> x.Cards = DealCards(StartingAmount).OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList());
+                    Players.ForEach(x => x.Cards = DealCards(StartingAmount).OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList());
+                    RefreshNeeded.Invoke(this, EventArgs.Empty);
                 }
-                return Players.First();
+                return Players[Players.IndexOf(EmptyPlayers.First())];
             }
-
-            return new() { Guid = guid };
-            
+            Players.Add(new() { Guid = guid });
+            return Players.Last();
         }
 
         public PlayerModel? GetPlayer(Guid guid) => Players.FirstOrDefault(x => x.Guid == guid);

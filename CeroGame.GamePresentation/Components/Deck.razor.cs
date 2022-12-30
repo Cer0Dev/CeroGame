@@ -21,13 +21,13 @@ namespace CeroGame.GamePresentation.Components
         public bool Hidden { get; set; } = true;
         private double _topOffsetMultiplyer = 1.3;
         private double _leftOffsetMultiplyer = 3;
-        [Parameter]
-        public List<CardModel> Cards
-        {
-            get => base._cards;
-            set => base._cards = value.OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList();
+        //[Parameter]
+        //public List<CardModel> Cards
+        //{
+        //    get => base._cards;
+        //    set => base._cards = value.OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList();
             
-        }
+        //}
 
 
     }

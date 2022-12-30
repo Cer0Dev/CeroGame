@@ -6,7 +6,7 @@
 
 
 @Player.Guid;
-Isplayer: @Player.Cards.Any();
+@Player.isPlayer;
 <CeroGame.GamePresentation.Components.MainDeck Table=this GM=GM />
 
 <CeroGame.GamePresentation.Components.MiddleDeck Table=this GM=GM />
@@ -16,7 +16,6 @@ Isplayer: @Player.Cards.Any();
 <CeroGame.GamePresentation.Components.Deck Table=this GM=GM Cards="GM.P2" />
 @code {
     private PlayerModel Player = new();
-
     [Parameter]
     public GameMaster GM { get; set; }
     protected override void OnInitialized()
@@ -30,17 +29,19 @@ Isplayer: @Player.Cards.Any();
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        var playerLookUp = (await ProtectedSessionStore.GetAsync<Guid>(GM.Guid.ToString()));
+        if (!playerLookUp.Success)
+        {
+            var userGuid = Guid.NewGuid();
+            await ProtectedSessionStore.SetAsync(GM.Guid.ToString(), userGuid);
+            Player = GM.AddPlayer(userGuid);
 
-        //if (!(await ProtectedSessionStore.GetAsync<Guid>(GM.SessionIdKey)).Success)
-        //{
-        //    await ProtectedSessionStore.SetAsync(GM.SessionIdKey, Guid.NewGuid().ToString());
-        //    //Player = GM.AddPlayer((await ProtectedSessionStore.GetAsync<Guid>(GM.SessionIdKey)).Value);
+        }
+        else
+        {
+            Player = GM.GetPlayer(playerLookUp.Value);
+        }
 
-        //}
-        //else
-        //{
-        //    //Player = GM.GetPlayer((await ProtectedSessionStore.GetAsync<Guid>(GM.SessionIdKey)).Value);
-        //}
         ////StateHasChanged();
     }
 
