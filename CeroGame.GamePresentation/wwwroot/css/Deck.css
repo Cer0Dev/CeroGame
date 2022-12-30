@@ -3,5 +3,14 @@
 
 .deck-row
 {
-    padding-left: 15%;
+/*    padding-left: 15%;*/
+}
+
+.absolute-deck-container {
+    position: relative;
+    display: inline-block;
+    height: var(--card-height-normal);
+    width: var(--card-width-normal);
+    margin: 2vw;
+    margin-bottom: 3.5vw;
 }

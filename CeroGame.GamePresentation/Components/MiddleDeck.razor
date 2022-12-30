@@ -1,22 +1,22 @@
-﻿@using CeroGame.GameService.GameLogic;
+﻿@using CeroGame.GamePresentation.Core;
+@using CeroGame.GameService.GameLogic;
 @using CeroGame.GameService.Models;
-@foreach(var item in PlayedCards)
-{
-    @if (PlayedCards.Count() > rotations.Count() && PlayedCards.FirstOrDefault() != item )
+@using MudBlazor
+@inherits DeckBase
+<div class="absolute-deck-container ">
+    <MudText>Cards Played:</MudText>
+    @foreach (var item in GM.MiddleDeck.TakeLast(GM.MaxMiddleCards))
     {
-        rotations.Add(new Random().Next(-10, 10));
+        @if (GM.MiddleDeck.Count() > GM.Rotations.Count() && GM.MiddleDeck.FirstOrDefault() != item)
+        {
+            GM.Rotations.Add(new Random().Next(-10, 10));
+        }
+        <div style=@($"position:absolute;transform:rotate({GM.Rotations[GM.MiddleDeck.IndexOf(item)]}deg);")>
+            <Card CardModel="item" Played=true Deck=this GM=GM Hidden=false></Card>
+        </div>
     }
-    <div style=@($"position:absolute; transform:rotate({rotations[PlayedCards.IndexOf(item)]}deg)")>
-    <Card CardModel="item" GM=GM Hidden=false></Card>
-    </div>
-}
+</div>
 
 
-    
 @code {
-    [Parameter]
-    public List<CardModel> PlayedCards { get; set; }
-    [Parameter]
-    public GameMaster GM { get; set; }
-    private List<int> rotations = new() { 0 };
 }

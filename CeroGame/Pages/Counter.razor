@@ -3,7 +3,39 @@
 @using CeroGame.GameService.Enums
 @using MudBlazor
 <MudBreakpointProvider></MudBreakpointProvider>
-@page "/counter"
+@page "/counter/{Id}"
 @*<MudGrid>*@
 
-<CeroGame.GamePresentation.Components.Table/>
+<CeroGame.GamePresentation.Components.Table GM="Game"/>
+
+
+@code{
+    public string _id = string.Empty;
+    [Parameter]
+    public string Id
+    {
+        get => _id;
+        set
+        {
+            _id = value;
+            Guid guid;
+            Guid.TryParse(Id, out guid);
+
+            Game = MultiUserHandler.FetchGame(guid);
+        }
+    }
+
+    private GameMaster? _game;
+    public GameMaster? Game
+    {
+        get => _game;
+        set
+        {
+            if(value is null)
+            {
+                return;
+            }
+            _game = value;
+        }
+    }
+}

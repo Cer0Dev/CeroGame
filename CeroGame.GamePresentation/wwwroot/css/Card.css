@@ -1,16 +1,22 @@
-﻿
+﻿:root {
+    --card-height-normal: 13.33vw;
+    --card-width-normal: 8.33vw;
+
+}
 body {
 }
 
 
 .card-container {
-    width: 8.33vw;
-    height: 13.33vw;
+    width: var(--card-width-normal);
+    height: var(--card-height-normal);
     border-color: white;
     border-style: solid;
     border-width: 0.416vw;
     display: inline-block;
     padding: 0;
+
+    /*background-image: linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73));*/
 }
 
 .CardDisabled {
@@ -41,9 +47,11 @@ body {
     position: relative;
     left: -0.25vw;
     user-select:none;
+    border-style:none;
 }
 .number-container-corner h1{
     font-size: 2vw;
+    margin:0;
 }
 
 .number-container-center {
@@ -56,35 +64,38 @@ body {
     border-radius: 2vw 0px;
     padding: 0.416vw;
     padding-right: 2.5vw;
-    user-select:none;
+    user-select: none;
+    border-style: none;
 }
 
     .number-container-center h1 {
         position: relative;
         right: -1.0833vw;
         font-size: 2.5vw;
+        margin-bottom:0.25vw;
+        margin-top:0.25vw;
     }
 
-@media only screen and (max-width: 600px) {
-    .card-container {
-        width: 11.3vw;
-        height: 17.3vw;
+/*@media only screen and (max-width: 600px) {
+    .card-container {*/
+        /*width: 11.3vw;*/
+        /*height: 17.3vw;*/
         /*margin-left: 25vw;*/
-    }
+    /*}
 
     .number-container-center {
         margin-top: 0;
     }
 
-    .number-container-corner {
-        font-size: 0.500rem;
-    }
+    .number-container-corner {*/
+        /*font-size: 0.500rem;*/
+    /*}
 }
 
 @media only screen and (max-width: 900px) {
 
     .number-container-center {
-        margin-top: -0.6vw;
+        margin-top: -0.6vw;*/
         /*padding-right: 2vw;*/
-    }
-}
+    /*}
+}*/

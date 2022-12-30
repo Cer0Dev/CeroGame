@@ -1,6 +1,7 @@
 ﻿@using CeroGame.GameService.GameLogic;
 @using MudBlazor
 
+
 <MudPaper @onclick="ToggleActive" Class=@($"card-container {CanBePlayedString}") Style=@($"background-color:{ColourString};position:relative; left:{LeftOffset}vw; top:calc({topOffset}vw + {_activeOffsetString}vw)") Elevation="3">
     @*@CardModel.GuidId;*@
     @if (!Hidden)
@@ -13,8 +14,3 @@
         </div>
     }
 </MudPaper>
-
-
-@code {
-
-}

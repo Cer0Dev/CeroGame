@@ -1,27 +1,57 @@
 ﻿@using CeroGame.GameService.GameLogic;
 @using CeroGame.GameService.Models;
 @using MudBlazor
-<button @onclick="StateHasChanged">test</button>
-<MudText>Cards Played:</MudText>
-<CeroGame.GamePresentation.Components.MiddleDeck GM=GM PlayedCards="GM.MiddleDeck"/>
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+
+@Player.Guid;
+Isplayer: @Player.Cards.Any();
+<CeroGame.GamePresentation.Components.MainDeck Table=this GM=GM />
+
+<CeroGame.GamePresentation.Components.MiddleDeck Table=this GM=GM />
 <MudText>ME:</MudText>
 <CeroGame.GamePresentation.Components.Deck Table=this Hidden=false GM=GM Cards="GM.P1" />
 <MudText>Them:</MudText>
 <CeroGame.GamePresentation.Components.Deck Table=this GM=GM Cards="GM.P2" />
 @code {
+    private PlayerModel Player = new();
 
-
-
-    private List<CardModel> models = new();
-    private GameMaster GM = new();
+    [Parameter]
+    public GameMaster GM { get; set; }
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
+        GM.RefreshNeeded += Refresh;
 
     }
 
-    public void Refresh() => StateHasChanged();
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        //if (!(await ProtectedSessionStore.GetAsync<Guid>(GM.SessionIdKey)).Success)
+        //{
+        //    await ProtectedSessionStore.SetAsync(GM.SessionIdKey, Guid.NewGuid().ToString());
+        //    //Player = GM.AddPlayer((await ProtectedSessionStore.GetAsync<Guid>(GM.SessionIdKey)).Value);
+
+        //}
+        //else
+        //{
+        //    //Player = GM.GetPlayer((await ProtectedSessionStore.GetAsync<Guid>(GM.SessionIdKey)).Value);
+        //}
+        ////StateHasChanged();
+    }
+
+    public bool hasRefreshed;
+
+    public async void Refresh(object? sender, System.EventArgs e) => await InvokeAsync(() =>
+    {
+        StateHasChanged();
+        hasRefreshed = true;
+
+    });
 
 
 }

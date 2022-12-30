@@ -1,0 +1,19 @@
+﻿@using CeroGame.GamePresentation.Core;
+@using CeroGame.GameService.GameLogic;
+@using CeroGame.GameService.Models;
+@using MudBlazor
+@inherits DeckBase
+<div class="absolute-deck-container ">
+    <MudText>Pick Up:</MudText>
+
+    @foreach (var item in GM.MainDeck)
+    {
+        <div style=@($"position:absolute")>
+            <Card CardModel="item" Deck=this CanPickup=true GM=GM></Card>
+        </div>
+    }
+</div>
+
+@code {
+
+}

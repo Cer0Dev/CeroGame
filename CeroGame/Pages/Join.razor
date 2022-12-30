@@ -1,0 +1,25 @@
+﻿@using CeroGame.GameService.GameLogic;
+@using CeroGame.GameService.Models
+@using CeroGame.GameService.Enums
+@using MudBlazor
+@inject NavigationManager Navigation
+@page "/join"
+@*<MudGrid>*@
+
+<MudButton OnClick="StartGame">AddGame</MudButton>
+<MudText>@LastGame</MudText>
+<MudButton OnClick="JoinGame">Join</MudButton>
+
+
+
+@code{
+    private Guid LastGame;
+    public void StartGame()
+    {
+        LastGame = MultiUserHandler.AddGame(new()).Guid;
+    }
+    public void JoinGame()
+    {
+        Navigation.NavigateTo("/counter/" + LastGame);
+    }
+}
