@@ -2,6 +2,7 @@
 using CeroGame.GameService.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -25,25 +26,44 @@ namespace CeroGame.GameService.GameLogic
         public int MaxMiddleCards = 15;
         public int AmountOfPlayers = 2;
         public List<PlayerModel> Players = new();
+        public bool PlusNextPlayer { get; set; }
+
         public PlayerModel CurrentPlayer;
+        public PlayerModel NextPlayer
+        {
+            get
+            {
+                var index = Players.IndexOf(CurrentPlayer);
+                return index + 1 >= AmountOfPlayers ? Players[0] : Players[index + 1];
+            }
+        }
         public List<int> Rotations = new() { 0 };
         public EventHandler RefreshNeeded;
-        public string SessionIdKey { get; } = "UserId";
+        public bool GameOver;
+        public Dictionary<CardTypes, Action> SpecialActions { get; set; } = new();
+        private int PlusCount;
         public GameMaster()
         {
             GenerateDeck();
             GeneratePlayers();
-            MiddleDeck = DealCards(1);
+            MiddleDeck = DealCards(1,true);
 
         }
         public void GenerateDeck()
         {
             if (StandardDeck)
             {
-                foreach (var item in Enum.GetValues(typeof(Colours)).Cast<Colours>())
+                SpecialActions.Add(CardTypes.PlusTwo, PlusAction);
+                SpecialActions.Add(CardTypes.Skip, SkipAction);
+                foreach (var item in Enum.GetValues(typeof(Colours)).Cast<Colours>().Where(x => x != Colours.Any).ToList())
                 {
                     Enumerable.Range(1, 9).ToList().ForEach(x => MainDeck.Add(new() { Colour = item, Number = x }));
                     Enumerable.Range(1, 9).ToList().ForEach(x => MainDeck.Add(new() { Colour = item, Number = x }));
+                    MainDeck.Add(new() { Colour = item, Text = "+2", CardType = CardTypes.PlusTwo });
+                    MainDeck.Add(new() { Colour = item, Text = "+2", CardType = CardTypes.PlusTwo });
+                    MainDeck.Add(new() { Colour = item, Icon = "fa-solid fa-ban", CardType = CardTypes.Skip });
+                    MainDeck.Add(new() { Colour = item, Icon = "fa-solid fa-ban", CardType = CardTypes.Skip });
+
                 }
             }
         }
@@ -53,6 +73,7 @@ namespace CeroGame.GameService.GameLogic
             for (int i = 0; i < AmountOfPlayers; i++)
             {
                 Players.Add(new());
+
             }
         }
 
@@ -70,9 +91,16 @@ namespace CeroGame.GameService.GameLogic
                 if (!Players.Any(x => x.Guid == Guid.Empty))
                 {
                     Players.ForEach(x => x.Cards = DealCards(StartingAmount).OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList());
-                    CurrentPlayer = Players[new Random().Next(0, Players.Count()) ];
+                    CurrentPlayer = Players[new Random().Next(0, Players.Count())];
+                    foreach (var item in Players)
+                    {
+                        Players[Players.IndexOf(item)].Cards.Add(new() { Colour = Colours.Red, CardType = CardTypes.PlusTwo, Text = "+2" });
+                        Players[Players.IndexOf(item)].Cards.Add(new() { Colour = Colours.Red, CardType = CardTypes.Standard, Number = 1 });
+                    }
                     RefreshNeeded.Invoke(this, EventArgs.Empty);
+
                 }
+
                 return Players[Players.IndexOf(EmptyPlayers.First())];
             }
             Players.Add(new() { Guid = guid });
@@ -81,38 +109,76 @@ namespace CeroGame.GameService.GameLogic
 
         public PlayerModel? GetPlayer(Guid guid) => Players.FirstOrDefault(x => x.Guid == guid);
         public List<CardModel> GetCards(PlayerModel player) => Players.First(x => x == player).Cards;
-        public List<CardModel> DealCards(int amount)
+        public List<CardModel> DealCards(int amount, bool middledeck = false)
         {
-            var cards = MainDeck.OrderBy(x => new Random().Next()).Take(amount).ToList();
+
+            if (amount > MainDeck.Count())
+            {
+                MiddleDeck.AddRange(MiddleDeck.Take(MiddleDeck.Count() - 1));
+                MiddleDeck.RemoveRange(0, MiddleDeck.Count() - 1);
+            }
+            List<CardModel> cards = new();
+            if (!middledeck)
+            {
+                cards = MainDeck.OrderBy(x => new Random().Next()).Take(amount).ToList();
+
+            }
+            else
+            {
+                cards = MainDeck.Where(x => x.CardType == CardTypes.Standard).OrderBy(x => new Random().Next()).Take(amount).ToList();
+
+            }
             MainDeck = MainDeck.Except(cards).ToList();
             return cards;
         }
 
         public void PlayCard(PlayerModel player, CardModel card)
         {
-
-            var success = Players.FirstOrDefault(x => x.Cards.Any(y => y == card))?.Cards.Remove(card);
+            var playerLookUp = Players[Players.IndexOf(player)];
+            var success = playerLookUp.Cards.Remove(card);
             MiddleDeck.Add(card);
             MainDeck.ForEach(x => x.Active = false);
-            UpdateCurrentPlayer();
+            if (!playerLookUp.HasCards)
+            {
+                GameOver = true;
+
+            }
+            else
+            {
+                UpdateCurrentPlayer();
+            }
             RefreshNeeded.Invoke(this, EventArgs.Empty);
         }
         public void UpdateCurrentPlayer()
         {
-            var index = Players.IndexOf(CurrentPlayer);
-            CurrentPlayer = index + 1 >= AmountOfPlayers ? Players[0] : Players[index + 1];
+            if (!MainDeck.Any())
+            {
+                MiddleDeck.AddRange(MiddleDeck.Take(MiddleDeck.Count() - 1));
+                MiddleDeck.RemoveRange(0, MiddleDeck.Count() - 1);
+            }
+            if (PlusNextPlayer && !NextPlayer.Cards.Any(x => x.CardType.ToString().Contains("plus", StringComparison.OrdinalIgnoreCase)))
+
+            {
+                DrawCard(NextPlayer);
+            }
+            CurrentPlayer = NextPlayer;
 
         }
 
         public void DrawCard(PlayerModel player)
         {
-            //for now just give to p1 until we add multi user handler
-            var card = DealCards(1).FirstOrDefault();
+            var card = DealCards(!PlusNextPlayer ? 1 : PlusCount);
+            if (PlusNextPlayer)
+            {
+                PlusNextPlayer = false;
+                PlusCount = 0;
+            }
             if (card is not null)
             {
-                Players[Players.IndexOf(player)].Cards.Add(card);
+                Players[Players.IndexOf(player)].Cards.AddRange(card);
             }
             MainDeck.ForEach(x => x.Active = false);
+
             UpdateCurrentPlayer();
             RefreshNeeded.Invoke(this, EventArgs.Empty);
 
@@ -122,6 +188,41 @@ namespace CeroGame.GameService.GameLogic
         {
             Players[Players.IndexOf(player)].Cards
             .ForEach(x => { if (x != cardToIgnore) { x.Active = false; } });
+
+            if (cardToIgnore is null)
+            {
+                MainDeck.ForEach(x => x.Active = false);
+            }
+            RefreshNeeded.Invoke(this, EventArgs.Empty);
+
+        }
+
+        public void DeactivateMainDeck()
+        {
+            MainDeck.ForEach(x => x.Active = false);
+            RefreshNeeded.Invoke(this, EventArgs.Empty);
+
+        }
+
+        public void PlusAction()
+        {
+            var card = CurrentPlayer.Cards.FirstOrDefault(x => x.CardType.ToString().Contains("plus", StringComparison.OrdinalIgnoreCase));
+            if (card is not null)
+            {
+                if (card.CardType == CardTypes.PlusTwo)
+                {
+                    PlusCount += 2;
+                }
+            }
+            PlusNextPlayer = true;
+            RefreshNeeded.Invoke(this, EventArgs.Empty);
+
+        }
+
+        public void SkipAction()
+        {
+            UpdateCurrentPlayer();
+            RefreshNeeded.Invoke(this, EventArgs.Empty);
 
         }
     }

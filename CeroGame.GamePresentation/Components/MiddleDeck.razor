@@ -4,7 +4,7 @@
 @using MudBlazor
 @inherits DeckBase
 <div class="absolute-deck-container ">
-    <MudText>Cards Played:</MudText>
+    @*<MudText>Cards Played:</MudText>*@
     @foreach (var item in GM.MiddleDeck.TakeLast(GM.MaxMiddleCards))
     {
         @if (GM.MiddleDeck.Count() > GM.Rotations.Count() && GM.MiddleDeck.FirstOrDefault() != item)

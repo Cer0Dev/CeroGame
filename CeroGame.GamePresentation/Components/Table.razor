@@ -1,39 +1,69 @@
 ﻿@using CeroGame.GameService.GameLogic;
 @using CeroGame.GameService.Models;
+@using Microsoft.JSInterop;
 @using MudBlazor
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage ProtectedSessionStore
-
-@if (Player.Guid != Guid.Empty)
+@if (Player.Guid != Guid.Empty && GM is not null)
 {
-    @Player.Guid
-    ;
-    @Player.isPlayer
-    ;
+
+@*    if (GM.AmountOfPlayers >= 2)
+    {
+        <div style="transform: rotate(180deg);">
+            <CeroGame.GamePresentation.Components.Deck Table=this GM=GM Player="GM.Players[1]" />
+        </div>
+
+    }
+    if (GM.AmountOfPlayers >= 3)
+    {
+        <div style="transform: rotate(90deg);">
+            <CeroGame.GamePresentation.Components.Deck Table=this GM=GM Player="GM.Players[2]" />
+        </div>
+
+    }
+    if (GM.AmountOfPlayers >= 4)
+    {
+        <div style="transform: rotate(-90deg);">
+            <CeroGame.GamePresentation.Components.Deck Table=this GM=GM Player="GM.Players[3]" />
+        </div>
+*@
+    <div class="row  align-items-center justify-content-center" style="padding-right: var(--card-width-normal);">
+
     <CeroGame.GamePresentation.Components.MainDeck Player=Player Table=this GM=GM />
 
     <CeroGame.GamePresentation.Components.MiddleDeck Player=Player Table=this GM=GM />
-    <MudText>ME:</MudText>
+    </div>
+
     <CeroGame.GamePresentation.Components.Deck Table=this Hidden=false GM=GM Player="Player" />
-    <MudText>Them:</MudText>
+@*    <MudText>Them:</MudText>*@
 
 }
-@*<CeroGame.GamePresentation.Components.Deck Table=this GM=GM Cards="GM.P2" />*@
 @code {
-    private PlayerModel Player = new();
+    protected PlayerModel Player = new();
+    [Inject]
+    public IJSRuntime jsruntime { get; set; }
     [Parameter]
-    public GameMaster GM { get; set; }
+    public GameMaster? GM { get; set; }
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        GM.RefreshNeeded += Refresh;
 
     }
+
 
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        if (GM is not null)
+        {
+            GM.RefreshNeeded += Refresh;
+        }
+        else
+        {
+            await jsruntime.InvokeVoidAsync("alert", "Game Failed to load: Invalid GameID");
+            return;
+        }
         var playerLookUp = (await ProtectedSessionStore.GetAsync<Guid>(GM.Guid.ToString()));
         if (!playerLookUp.Success)
         {

@@ -11,7 +11,7 @@ namespace CeroGame.GamePresentation
 
     public class ExampleJsInterop : IAsyncDisposable
     {
-        private readonly Lazy<Task<IJSObjectReference>> moduleTask;
+        protected readonly Lazy<Task<IJSObjectReference>> moduleTask;
 
         public ExampleJsInterop(IJSRuntime jsRuntime)
         {

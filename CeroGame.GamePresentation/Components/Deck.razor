@@ -1,20 +1,34 @@
 ﻿@using CeroGame.GamePresentation.Core;
+@using Microsoft.JSInterop;
 @inherits DeckBase
+
 <div>
-@for (int i = 0; i < Math.Ceiling((double)Cards.Count() / CardsPerRow); i++)
-{
-    var index = (i * CardsPerRow) <= Cards.Count() - 1 ? (i * CardsPerRow) : Math.Abs((i * CardsPerRow) - (Cards.Count() - 1));
-    var count = (CardsPerRow + index <= Cards.Count() - 1 ? CardsPerRow : Math.Abs(Cards.Count() - index));
-    var topOffset = (_topOffsetMultiplyer * i) * -1;
-    <div class="row align-items-center justify-content-center" style=@($"padding-right: calc(var(--card-width-normal) * {(CardsPerRow-count)/2}); padding-left: var(--card-width-normal);")>
+    <div class="row  align-items-center justify-content-center " style="margin-left: calc( var(--card-width-normal));">
+        <div class="col-1">
+            <div style="width:3vw; height:3vw; margin-left:auto; margin-right:auto;">
+                <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" style="border-radius: 200px; border-style;border-style: solid;border-color: black; border-width:medium;" width="100%" />
+            </div>
+        </div>
+        <div class="col-6" style="margin-top:auto; margin-bottom:auto;">
 
-        @foreach (var item in Cards.GetRange(index, count))
-        {
-            var leftOffset = (_leftOffsetMultiplyer * (Math.Ceiling((double)Cards.IndexOf(item) % CardsPerRow))) * -1;
+            @Player.Guid
+        </div>
 
-            <CeroGame.GamePresentation.Components.Card Hidden=Hidden CardModel="item" Deck="this" GM=this.GM LeftOffset="leftOffset" topOffset="topOffset" />
-        }
     </div>
+    @for (int i = 0; i < Math.Ceiling((double)Cards.Count() / CardsPerRow); i++)
+    {
+        var index = (i * CardsPerRow) <= Cards.Count() - 1 ? (i * CardsPerRow) : Math.Abs((i * CardsPerRow) - (Cards.Count() - 1));
+        var count = (CardsPerRow + index <= Cards.Count() - 1 ? CardsPerRow : Math.Abs(Cards.Count() - index));
+        var topOffset = (_topOffsetMultiplyer * i) * -1;
+        <div class="row align-items-center justify-content-center flex-nowrap" style=@($"padding-right: calc(var(--card-width-normal) * {(CardsPerRow-count)/2}); padding-left: var(--card-width-normal);")>
 
-}
+            @foreach (var item in Cards.GetRange(index, count))
+            {
+                var leftOffset = (_leftOffsetMultiplyer * (Math.Ceiling((double)Cards.IndexOf(item) % CardsPerRow))) * -1;
+
+                <CeroGame.GamePresentation.Components.Card Hidden=Hidden CardModel="item" Deck="this" GM=this.GM LeftOffset="leftOffset" topOffset="topOffset" />
+            }
+        </div>
+
+    }
 </div>

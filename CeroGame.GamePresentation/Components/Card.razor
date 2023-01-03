@@ -1,4 +1,7 @@
-﻿@using CeroGame.GameService.GameLogic;
+﻿@using CeroGame.GamePresentation.Core;
+@using CeroGame.GameService.Enums;
+@using CeroGame.GameService.GameLogic;
+@using CeroGame.GameService;
 @using MudBlazor
 
 
@@ -7,10 +10,26 @@
     @if (!Hidden)
     {
         <div class="number-container-corner">
-            <h1>@CardModel.Number</h1>
+            @if (CardModel.isNumber)
+            {
+                <h1>@CardModel.Number</h1>
+            }
+            else if(!string.IsNullOrEmpty(CardModel.Icon))
+            {
+                <i class="@CardModel.Icon"></i>
+            }
+            else if(!string.IsNullOrEmpty(CardModel.Image))
+            {
+                <img src="@CardModel.Image"/>
+            }
+            else if(!string.IsNullOrEmpty(CardModel.Text))
+            {
+                <p>@CardModel.Text</p>
+            }
         </div>
         <div class="number-container-center .text-center">
-            <h1>@CardModel.Number</h1>
+
+                <h1>@CardModel.Number</h1>
         </div>
     }
 </MudPaper>

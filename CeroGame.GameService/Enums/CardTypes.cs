@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace CeroGame.GameService.Enums
 {
-    public enum Colours
+    public enum CardTypes
     {
-        Any,
-        Red,
-        Blue,
-        Green,
-        Yellow
+        Standard,
+        PlusTwo,
+        Skip
     }
 }

@@ -2,6 +2,7 @@
 using CeroGame.GameService.GameLogic;
 using CeroGame.GameService.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,8 @@ namespace CeroGame.GamePresentation.Components
         public int CardsPerRow { get; set; } = 7;
         [Parameter]
         public bool Hidden { get; set; } = true;
-        private double _topOffsetMultiplyer = 1.3;
-        private double _leftOffsetMultiplyer = 3;
+        protected double _topOffsetMultiplyer = 1.3;
+        protected double _leftOffsetMultiplyer = 3;
 
         protected override void OnParametersSet()
         {
@@ -30,8 +31,18 @@ namespace CeroGame.GamePresentation.Components
                 Cards = GM.GetCards(Player);
 
             }
+
+
         }
 
+        protected async override Task OnParametersSetAsync()
+        {
+            await base.OnParametersSetAsync();
+            if (GM.GameOver)
+            {
+                await jsruntime.InvokeVoidAsync("alert", GM.CurrentPlayer.Guid + " Has won the game");
+            }
+        }
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -43,16 +54,14 @@ namespace CeroGame.GamePresentation.Components
         }
 
 
-        private List<CardModel> _cards = new();
+        protected List<CardModel> _cards = new();
 
 
-        private List<CardModel> Cards
+        protected List<CardModel> Cards
         {
             get => _cards;
             set => _cards = value.OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList();
 
         }
-
-
     }
 }

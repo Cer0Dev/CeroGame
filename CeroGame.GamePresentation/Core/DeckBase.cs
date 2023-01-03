@@ -2,11 +2,13 @@
 using CeroGame.GameService.GameLogic;
 using CeroGame.GameService.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CeroGame.GamePresentation.Core
 {
@@ -18,11 +20,19 @@ namespace CeroGame.GamePresentation.Core
         public Table? Table { get; set; }
         [Parameter]
         public PlayerModel Player { get; set; }
+        [Inject]
+        public IJSRuntime jsruntime { get; set; }
 
-        public void DeactivateCards(CardModel cardToIgnore)
+        public void DeactivateCards(CardModel? cardToIgnore = null)
         {
             GM.DeactivateCards(Player, cardToIgnore);
             StateHasChanged();
+        }
+        public void DeactivateMainDeck()
+        {
+            GM.DeactivateCards(Player);
+            StateHasChanged();
+
         }
         public void PlayCard(CardModel card)
         {

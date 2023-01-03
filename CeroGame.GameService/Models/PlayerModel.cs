@@ -11,6 +11,6 @@ namespace CeroGame.GameService.Models
         public Guid Guid { get; set; } = Guid.Empty;
         public List<CardModel> Cards { get; set; } = new();
         
-        public bool isPlayer => Cards.Any();
+        public bool HasCards => Cards.Any();
     }
 }

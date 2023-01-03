@@ -53,6 +53,16 @@ body {
     font-size: 2vw;
     margin:0;
 }
+    .number-container-corner p {
+        font-size: 1.5vw;
+        margin: 0;
+        font-weight:bold;
+    }
+    .number-container-corner i{
+        font-size: 1.3vw;
+        margin: 0;
+        font-weight: bold;
+    }
 
 .number-container-center {
     width: fit-content;
@@ -71,7 +81,8 @@ body {
     .number-container-center h1 {
         position: relative;
         right: -1.0833vw;
-        font-size: 2.5vw;
+        font-size: 3vw;
+        /*font-size: 2.5vw;*/
         margin-bottom:0.25vw;
         margin-top:0.25vw;
     }
