@@ -3,6 +3,7 @@
 @using CeroGame.GameService.Enums
 @using MudBlazor
 @inject NavigationManager Navigation
+@inject MultiUserHandler MUH
 @page "/"
 @*<MudGrid>*@
 <MudButton OnClick="StartGame">AddGame</MudButton>
@@ -15,7 +16,7 @@
     protected Guid LastGame;
     public void StartGame()
     {
-        LastGame = MultiUserHandler.AddGame(new()).Guid;
+        LastGame = MUH.AddGame(new(MUH)).Guid;
     }
     public void JoinGame()
     {

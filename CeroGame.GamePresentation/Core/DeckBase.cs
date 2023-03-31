@@ -15,13 +15,13 @@ namespace CeroGame.GamePresentation.Core
     public class DeckBase : ComponentBase
     {
         [Parameter]
-        public GameMaster GM { get; set; }
+        public GameMaster GM { get; set; } = default!;
         [Parameter]
         public Table? Table { get; set; }
         [Parameter]
-        public PlayerModel Player { get; set; }
+        public PlayerModel Player { get; set; } = default!;
         [Inject]
-        public IJSRuntime jsruntime { get; set; }
+        public IJSRuntime jsruntime { get; set; } = default!;
 
         public void DeactivateCards(CardModel? cardToIgnore = null)
         {

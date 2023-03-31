@@ -5,7 +5,7 @@
 @using MudBlazor
 
 
-<MudPaper @onclick="ToggleActive" Class=@($"card-container {CanBePlayedString}") Style=@($"background-color:{ColourString};position:relative; left:{LeftOffset}vw; top:calc({topOffset}vw + {_activeOffsetString}vw)") Elevation="3">
+<MudPaper @onclick="ToggleActive" Class=@($"card-container {CanBePlayedString}") Style=@($"background-color:{ColourString}; left:{LeftOffset}vw; top:calc({topOffset}vw + {_activeOffsetString}vw); {ShouldAddMarginString}") Elevation="3">
     @*@CardModel.GuidId;*@
     @if (!Hidden)
     {

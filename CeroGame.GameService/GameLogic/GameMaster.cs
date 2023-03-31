@@ -22,14 +22,16 @@ namespace CeroGame.GameService.GameLogic
         public List<CardModel> MiddleDeck = new();
         public bool StandardDeck = true;
         // must be less than the amount of cards in deck
-        public int StartingAmount = 20;
+        public int StartingAmount = 3;
+        //public int StartingAmount = 20;
         public int MaxMiddleCards = 15;
         public int AmountOfPlayers = 2;
         public List<PlayerModel> Players = new();
+        public int OpponentCardCount = 5;
         public bool PlusNextPlayer { get; set; }
 
-        public PlayerModel CurrentPlayer;
-        public PlayerModel NextPlayer
+        public PlayerModel? CurrentPlayer;
+        public PlayerModel? NextPlayer
         {
             get
             {
@@ -38,15 +40,18 @@ namespace CeroGame.GameService.GameLogic
             }
         }
         public List<int> Rotations = new() { 0 };
-        public EventHandler RefreshNeeded;
+        public EventHandler? RefreshNeeded;
+        public EventHandler<bool>? GameEnded;
         public bool GameOver;
         public Dictionary<CardTypes, Action> SpecialActions { get; set; } = new();
         private int PlusCount;
-        public GameMaster()
+        private MultiUserHandler MultiUserHandler { get; set; }
+        public GameMaster(MultiUserHandler multiUserHandler)
         {
             GenerateDeck();
             GeneratePlayers();
             MiddleDeck = DealCards(1,true);
+            MultiUserHandler = multiUserHandler;
 
         }
         public void GenerateDeck()
@@ -92,12 +97,12 @@ namespace CeroGame.GameService.GameLogic
                 {
                     Players.ForEach(x => x.Cards = DealCards(StartingAmount).OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList());
                     CurrentPlayer = Players[new Random().Next(0, Players.Count())];
-                    foreach (var item in Players)
-                    {
-                        Players[Players.IndexOf(item)].Cards.Add(new() { Colour = Colours.Red, CardType = CardTypes.PlusTwo, Text = "+2" });
-                        Players[Players.IndexOf(item)].Cards.Add(new() { Colour = Colours.Red, CardType = CardTypes.Standard, Number = 1 });
-                    }
-                    RefreshNeeded.Invoke(this, EventArgs.Empty);
+                    //foreach (var item in Players)
+                    //{
+                    //    Players[Players.IndexOf(item)].Cards.Add(new() { Colour = Colours.Red, CardType = CardTypes.PlusTwo, Text = "+2" });
+                    //    Players[Players.IndexOf(item)].Cards.Add(new() { Colour = Colours.Red, CardType = CardTypes.Standard, Number = 1 });
+                    //}
+                    RefreshNeeded?.Invoke(this, EventArgs.Empty);
 
                 }
 
@@ -141,14 +146,17 @@ namespace CeroGame.GameService.GameLogic
             if (!playerLookUp.HasCards)
             {
                 GameOver = true;
-
+                GameEnded?.Invoke(this,GameOver);
+                _ = MultiUserHandler.DestroyGameAsync(this);
             }
             else
             {
                 UpdateCurrentPlayer();
             }
-            RefreshNeeded.Invoke(this, EventArgs.Empty);
+            RefreshNeeded?.Invoke(this, EventArgs.Empty);
         }
+
+
         public void UpdateCurrentPlayer()
         {
             if (!MainDeck.Any())
@@ -156,7 +164,7 @@ namespace CeroGame.GameService.GameLogic
                 MiddleDeck.AddRange(MiddleDeck.Take(MiddleDeck.Count() - 1));
                 MiddleDeck.RemoveRange(0, MiddleDeck.Count() - 1);
             }
-            if (PlusNextPlayer && !NextPlayer.Cards.Any(x => x.CardType.ToString().Contains("plus", StringComparison.OrdinalIgnoreCase)))
+            if (PlusNextPlayer && NextPlayer is not null && !NextPlayer.Cards.Any(x => x.CardType.ToString().Contains("plus", StringComparison.OrdinalIgnoreCase)))
 
             {
                 DrawCard(NextPlayer);
@@ -180,7 +188,7 @@ namespace CeroGame.GameService.GameLogic
             MainDeck.ForEach(x => x.Active = false);
 
             UpdateCurrentPlayer();
-            RefreshNeeded.Invoke(this, EventArgs.Empty);
+            RefreshNeeded?.Invoke(this, EventArgs.Empty);
 
         }
 
@@ -193,20 +201,20 @@ namespace CeroGame.GameService.GameLogic
             {
                 MainDeck.ForEach(x => x.Active = false);
             }
-            RefreshNeeded.Invoke(this, EventArgs.Empty);
+            RefreshNeeded?.Invoke(this, EventArgs.Empty);
 
         }
 
         public void DeactivateMainDeck()
         {
             MainDeck.ForEach(x => x.Active = false);
-            RefreshNeeded.Invoke(this, EventArgs.Empty);
+            RefreshNeeded?.Invoke(this, EventArgs.Empty);
 
         }
 
         public void PlusAction()
         {
-            var card = CurrentPlayer.Cards.FirstOrDefault(x => x.CardType.ToString().Contains("plus", StringComparison.OrdinalIgnoreCase));
+            var card = CurrentPlayer?.Cards.FirstOrDefault(x => x.CardType.ToString().Contains("plus", StringComparison.OrdinalIgnoreCase));
             if (card is not null)
             {
                 if (card.CardType == CardTypes.PlusTwo)
@@ -215,14 +223,14 @@ namespace CeroGame.GameService.GameLogic
                 }
             }
             PlusNextPlayer = true;
-            RefreshNeeded.Invoke(this, EventArgs.Empty);
+            RefreshNeeded?.Invoke(this, EventArgs.Empty);
 
         }
 
         public void SkipAction()
         {
             UpdateCurrentPlayer();
-            RefreshNeeded.Invoke(this, EventArgs.Empty);
+            RefreshNeeded?.Invoke(this, EventArgs.Empty);
 
         }
     }

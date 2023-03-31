@@ -20,6 +20,9 @@ namespace CeroGame.GamePresentation.Components
         public int CardsPerRow { get; set; } = 7;
         [Parameter]
         public bool Hidden { get; set; } = true;
+        [Parameter]
+        public int Position { get; set; } = 0;
+        private bool IsThisPlayer { get => Position == 0; }
         protected double _topOffsetMultiplyer = 1.3;
         protected double _leftOffsetMultiplyer = 3;
 
@@ -33,15 +36,6 @@ namespace CeroGame.GamePresentation.Components
             }
 
 
-        }
-
-        protected async override Task OnParametersSetAsync()
-        {
-            await base.OnParametersSetAsync();
-            if (GM.GameOver)
-            {
-                await jsruntime.InvokeVoidAsync("alert", GM.CurrentPlayer.Guid + " Has won the game");
-            }
         }
         protected override void OnInitialized()
         {
@@ -60,7 +54,17 @@ namespace CeroGame.GamePresentation.Components
         protected List<CardModel> Cards
         {
             get => _cards;
-            set => _cards = value.OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList();
+            set
+            {
+                //if(!IsThisPlayer)
+                //{
+                //    value = value.Take(GM.OpponentCardCount).ToList();
+                //}
+                _cards = value.OrderBy(x => x.Colour).ThenBy(x => x.Number).ToList();
+
+
+            }
+
 
         }
     }

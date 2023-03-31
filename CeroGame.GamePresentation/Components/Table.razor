@@ -7,7 +7,7 @@
 @if (Player.Guid != Guid.Empty && GM is not null)
 {
 
-@*    if (GM.AmountOfPlayers >= 2)
+    @*    if (GM.AmountOfPlayers >= 2)
     {
         <div style="transform: rotate(180deg);">
             <CeroGame.GamePresentation.Components.Deck Table=this GM=GM Player="GM.Players[1]" />
@@ -27,15 +27,19 @@
             <CeroGame.GamePresentation.Components.Deck Table=this GM=GM Player="GM.Players[3]" />
         </div>
 *@
+    if (GM.AmountOfPlayers >= 2)
+    {
+        <CeroGame.GamePresentation.Components.Deck Table=this GM=GM Player="GM.Players[(GM.Players.IndexOf(Player)+1) % GM.Players.Count ]" Position="1" />
+    }
     <div class="row  align-items-center justify-content-center" style="padding-right: var(--card-width-normal);">
 
-    <CeroGame.GamePresentation.Components.MainDeck Player=Player Table=this GM=GM />
+        <CeroGame.GamePresentation.Components.MainDeck Player=Player Table=this GM=GM />
 
-    <CeroGame.GamePresentation.Components.MiddleDeck Player=Player Table=this GM=GM />
+        <CeroGame.GamePresentation.Components.MiddleDeck Player=Player Table=this GM=GM />
     </div>
 
     <CeroGame.GamePresentation.Components.Deck Table=this Hidden=false GM=GM Player="Player" />
-@*    <MudText>Them:</MudText>*@
+    @*    <MudText>Them:</MudText>*@
 
 }
 @code {
@@ -58,6 +62,7 @@
         if (GM is not null)
         {
             GM.RefreshNeeded += Refresh;
+            //GM.GameEnded += GameOver;
         }
         else
         {
@@ -80,6 +85,32 @@
         ////StateHasChanged();
     }
 
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (GM is not null && GM.GameOver)
+        {
+            await jsruntime.InvokeVoidAsync("alert", GM.CurrentPlayer?.Guid + " Has won the game");
+        }
+
+    }
+
+    //await base.OnParametersSetAsync();
+    //    if (GM.GameOver)
+    //    {
+    //        await jsruntime.InvokeVoidAsync("alert", GM.CurrentPlayer.Guid + " Has won the game");
+    //}
+
+    //public async void GameOver(object? sender, bool gameOver) => await InvokeAsync(async () =>
+    //{
+    //        if (GM is not null && GM.GameOver)
+    //        {
+    //            await jsruntime.InvokeVoidAsync("alert", GM?.CurrentPlayer!.Guid + " Has won the game");
+    //        }
+
+
+    //});
     public async void Refresh(object? sender, System.EventArgs e) => await InvokeAsync(() =>
     {
         StateHasChanged();

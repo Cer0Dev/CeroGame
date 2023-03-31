@@ -14,7 +14,7 @@ namespace CeroGame.GamePresentation.Components
     public partial class Card
     {
         [Parameter]
-        public CardModel CardModel { get; set; }
+        public CardModel CardModel { get; set; } = new();
         [Parameter]
         public DeckBase? Deck { get; set; }
         [Parameter]
@@ -29,30 +29,34 @@ namespace CeroGame.GamePresentation.Components
         public bool CanPickup { get; set; }
         [Parameter]
         public bool Played { get; set; }
+        [Parameter]
+        public bool ShouldAddMargin { get; set; }
         private string ColourString { get => Hidden ? "grey" : CardModel.Colour.ToString(); }
         private string CanBePlayedString { get => CanBePlayed ? "CanBePlayed" : "CardDisabled"; }
-        private string _activeOffsetString { get => CardModel.Active && !Played && GM.CurrentPlayer == Deck.Player ? "-2" : "0"; }
+        private string ShouldAddMarginString { get => ShouldAddMargin ? "margin-left:auto" : string.Empty; }
+       
+        private string _activeOffsetString { get => CardModel.Active && !Played && GM.CurrentPlayer == Deck?.Player ? "-2" : "0"; }
         //Will need to modify this when multi user handler is implemented to check if the card exists in players hands played is temp variable
-        public bool CanBePlayed { get => ((( ColourMatch || NumberMatch) && !Played && !Hidden && SpecialMatch) || CanPickup) && CurrentPlayer && !GM.GameOver; }
+        public bool CanBePlayed { get => (((ColourMatch || NumberMatch) && !Played && !Hidden && SpecialMatch) || CanPickup) && CurrentPlayer && !GM.GameOver; }
         private bool ColourMatch { get => (GM.MiddleDeck.Last().Colour == CardModel.Colour || CardModel.Colour == Colours.Any); }
         private bool NumberMatch { get => GM.MiddleDeck.Last().Number == CardModel.Number; }
         private bool CurrentPlayer { get => Deck?.Player == GM.CurrentPlayer; }
-        private bool SpecialMatch { get => GM.MiddleDeck.Last().Number != 0 || GM.MiddleDeck.Last().Number == 0 && CardModel.CardType == GM.MiddleDeck.Last().CardType  || GM.MiddleDeck.Last().Number == 0 && ColourMatch && !GM.PlusNextPlayer; }
+        private bool SpecialMatch { get => GM.MiddleDeck.Last().Number != 0 || GM.MiddleDeck.Last().Number == 0 && CardModel.CardType == GM.MiddleDeck.Last().CardType || GM.MiddleDeck.Last().Number == 0 && ColourMatch && !GM.PlusNextPlayer; }
         public virtual void ToggleActive()
         {
             if (!CanBePlayed) return;
-            if(CardModel.CardType != CardTypes.Standard && CardModel.Active && !CanPickup)
+            if (CardModel.CardType != CardTypes.Standard && CardModel.Active && !CanPickup)
             {
                 GM.SpecialActions[CardModel.CardType].Invoke();
             }
             if (CanPickup && CardModel.Active)
             {
-                Deck.DrawCard();
+                Deck?.DrawCard();
                 return;
             }
             else if (CardModel.Active)
             {
-                Deck.PlayCard(CardModel);
+                Deck?.PlayCard(CardModel);
                 CardModel.Active = !CardModel.Active;
                 return;
             }
